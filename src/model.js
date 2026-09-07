@@ -1,4 +1,5 @@
 import { ids } from './catalog.js';
+// Preserve the original storage identifier so existing vaccination records remain accessible.
 export const STORAGE_KEY = 'everwell.records.v1';
 export const MAX_STATE_BYTES = 600000;
 export const emptyState = () => ({ version: 1, records: {} });
@@ -13,7 +14,7 @@ export function validDate(value) {
   return Number.isFinite(+date) && date.toISOString().slice(0, 10) === value;
 }
 export function validateState(input) {
-  const fail = () => { throw new Error('This is not a valid Everwell backup (or it uses a newer format).'); };
+  const fail = () => { throw new Error('This is not a valid diavaxx backup (or it uses a newer format).'); };
   if (!input || input.version !== 1 || !input.records || typeof input.records !== 'object' || Array.isArray(input.records)) fail();
   const state = emptyState();
   let total = 0;

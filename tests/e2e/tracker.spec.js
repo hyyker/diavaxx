@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { encode } from '../../src/transfer.js';
-import { emptyState } from '../../src/model.js';
+import { emptyState, STORAGE_KEY } from '../../src/model.js';
 const state = { version: 1, records: { measles: { plan: 'track', target: 2, nextDate: '', doses: [{ id: 'one', date: '2020-03-01', type: 'MMR' }] } } };
 async function importState(page, incoming = state) {
   await page.goto('/#transfer=' + encode(incoming));
@@ -33,7 +33,7 @@ test('log, edit, complete, remind, skip, persist, and delete a dose', async ({ p
   await row.getByRole('button', { name: 'Edit', exact: true }).last().click();
   await page.getByRole('button', { name: 'Delete dose', exact: true }).click();
   await page.getByRole('button', { name: 'Delete dose', exact: true }).click();
-  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('everwell.records.v1')));
+  const saved = await page.evaluate(key => JSON.parse(localStorage.getItem(key)), STORAGE_KEY);
   expect(saved.records.measles.doses).toHaveLength(1);
   expect(errors).toEqual([]);
 });
@@ -49,7 +49,7 @@ test('combination vaccine, search, exact export and QR image import', async ({ p
   await page.getByRole('button', { name: 'Transfer records', exact: true }).click();
   await expect(page.locator('#qr-canvas')).toBeVisible();
   const code = await page.locator('#export-code').inputValue();
-  const original = await page.evaluate(() => JSON.parse(localStorage.getItem('everwell.records.v1')));
+  const original = await page.evaluate(key => JSON.parse(localStorage.getItem(key)), STORAGE_KEY);
   const qr = await page.locator('#qr-canvas').screenshot();
   const context = await browser.newContext(); const other = await context.newPage();
   await other.goto('/');
@@ -58,7 +58,7 @@ test('combination vaccine, search, exact export and QR image import', async ({ p
   await other.getByLabel('Upload QR image').setInputFiles({ name: 'qr.png', mimeType: 'image/png', buffer: qr });
   await expect(other.getByText('Ready to import', { exact: true })).toBeVisible();
   await other.getByRole('button', { name: 'Replace with this record' }).click();
-  const restored = await other.evaluate(() => JSON.parse(localStorage.getItem('everwell.records.v1')));
+  const restored = await other.evaluate(key => JSON.parse(localStorage.getItem(key)), STORAGE_KEY);
   expect(restored).toEqual(original); expect(Object.keys(restored.records)).toHaveLength(3);
   expect(code).toMatch(/^EV1\./);
   await context.close();
@@ -70,18 +70,18 @@ test('malformed import leaves saved data unchanged, empty replacement works, mob
   await page.getByLabel('Transfer code or link').fill('invalid');
   await page.getByRole('button', { name: 'Preview import' }).click();
   await expect(page.locator('#modal-error')).toBeVisible();
-  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('everwell.records.v1')))).toEqual(state);
+  expect(await page.evaluate(key => JSON.parse(localStorage.getItem(key)), STORAGE_KEY)).toEqual(state);
   await page.getByLabel('Transfer code or link').fill(encode(emptyState()));
   await page.getByRole('button', { name: 'Preview import' }).click();
   await page.getByRole('button', { name: 'Replace with this record' }).click();
-  expect(await page.evaluate(() => JSON.parse(localStorage.getItem('everwell.records.v1')))).toEqual(emptyState());
+  expect(await page.evaluate(key => JSON.parse(localStorage.getItem(key)), STORAGE_KEY)).toEqual(emptyState());
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(true);
 });
 test('starter plan and keyboard-accessible record editing', async ({ page }) => {
   await page.goto('/');
   await page.getByRole('button', { name: 'Explore the Finnish starter plan' }).click();
   await page.getByRole('button', { name: 'Use starter plan' }).click();
-  const saved = await page.evaluate(() => JSON.parse(localStorage.getItem('everwell.records.v1')));
+  const saved = await page.evaluate(key => JSON.parse(localStorage.getItem(key)), STORAGE_KEY);
   expect(Object.keys(saved.records)).toHaveLength(7);
   expect(saved.records.rubella.target).toBe(2);
   const summary = page.locator('details[data-id="polio"] summary');

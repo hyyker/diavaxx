@@ -1,4 +1,4 @@
-# Everwell
+# diavaxx
 
 A responsive, English-language vaccination tracker for GitHub Pages. All records stay in the browser. No backend, accounts, analytics, remote fonts, or runtime CDN dependencies.
 

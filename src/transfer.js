@@ -17,7 +17,7 @@ export function extract(text) {
 }
 export function decode(text) {
   const code = extract(text);
-  if (code.length > MAX_CODE_LENGTH || !/^EV1\.[A-Za-z0-9_-]+$/.test(code)) throw new Error('Invalid transfer code. Paste the complete Everwell code or transfer link.');
+  if (code.length > MAX_CODE_LENGTH || !/^EV1\.[A-Za-z0-9_-]+$/.test(code)) throw new Error('Invalid transfer code. Paste the complete diavaxx code or transfer link.');
   try {
     const bytes = Uint8Array.from(atob(code.slice(4).replaceAll('-', '+').replaceAll('_', '/')), c => c.charCodeAt(0));
     const chunks = []; let size = 0;
@@ -47,7 +47,7 @@ export class PartCollector {
     const value = extract(raw);
     if (value.startsWith('EV1.')) return { code: value };
     const match = /^EVQ1\.([a-f0-9]{12})\.(\d+)\.(\d+)\.([A-Za-z0-9_.-]+)$/.exec(value);
-    if (!match) throw new Error('No Everwell transfer found in this code.');
+    if (!match) throw new Error('No diavaxx transfer found in this code.');
     const [, key, indexText, totalText, chunk] = match;
     const index = Number(indexText), total = Number(totalText);
     if (total < 2 || total > Math.ceil(MAX_CODE_LENGTH / 900) || index < 1 || index > total || chunk.length > 900) throw new Error('Invalid QR part.');
