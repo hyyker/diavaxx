@@ -1,27 +1,54 @@
-export const WHO_SOURCE = 'https://www.who.int/teams/immunization-vaccines-and-biologicals/diseases';
-export const WHO_SCHEDULES = 'https://www.who.int/teams/immunization-vaccines-and-biologicals/policies/who-recommendations-for-routine-immunization---summary-tables';
-export const FINLAND_SOURCE = 'https://www.rokotesuoja.fi/miksi-rokottautua/kansallinen-rokotusohjelma';
-export const adultTargets = { diphtheria: 3, tetanus: 3, pertussis: 3, polio: 3, measles: 2, mumps: 2, rubella: 2 };
-export const guidance = {
-  diphtheria: 'Finnish adult boosters: at ages 25, 45 and 65, then every 10 years. Record your next appointment separately.',
-  tetanus: 'Finnish adult boosters: at ages 25, 45 and 65, then every 10 years. Wound care may require a separate assessment.',
-  pertussis: 'The Finnish adult programme includes a booster at 25. Pregnancy and other circumstances may change your plan.',
-  polio: 'The Finnish reference does not specify routine adult boosters after the primary series; travel or exposure can change this.',
-  measles: 'The Finnish adult reference uses two MMR doses or a history of the disease. This tracker counts recorded doses only.',
-  mumps: 'The Finnish adult reference uses two MMR doses or a history of the disease. This tracker counts recorded doses only.',
-  rubella: 'The Finnish adult reference uses two MMR doses or a history of the disease. This tracker counts recorded doses only.',
-  influenza: 'The Finnish programme offers annual vaccination to adults aged 65+ and risk groups. Set a reminder for the next seasonal review.',
-  'hepatitis-a': 'Schedules depend on the product and age. Set your agreed dose target; do not infer it from the brand name alone.',
-  'hepatitis-b': 'A three-dose series is common; age and product can change the schedule. Confirm your personal target.',
+// The catalogue contains identities only. Schedule rules live in plans.js.
+export const SOURCES = {
+  who: 'https://www.who.int/teams/immunization-vaccines-and-biologicals/diseases',
+  schedules:
+    'https://www.who.int/teams/immunization-vaccines-and-biologicals/policies/who-recommendations-for-routine-immunization---summary-tables',
+  table:
+    'https://cdn.who.int/media/docs/default-source/immunization/immunization_schedules/immunization-summary-table-1.pdf',
+  finland:
+    'https://thl.fi/nakemyksemme/korkeasta-rokotuskattavuudesta-on-pidettava-huolta/kansallinen-rokotusohjelma-mita-rokotteita-eri-ikaisille-suositellaan-',
+  germany:
+    'https://www.bundesgesundheitsministerium.de/themen/praevention/impfungen/schutzimpfungen',
+  germanCovid: 'https://edoc.rki.de/handle/176904/13784.2',
+  covid: 'https://www.who.int/publications/m/item/who-policy-brief-covid-19-vaccination',
+  chikungunya: 'https://www.ema.europa.eu/en/medicines/human/EPAR/ixchiq',
+  ebola: 'https://www.who.int/news-room/questions-and-answers/item/ebola-vaccines',
+  hepatitisE: 'https://www.who.int/news-room/fact-sheets/detail/hepatitis-E',
+  mpox: 'https://www.who.int/news-room/questions-and-answers/item/mpox-vaccines',
 };
+export const SOURCE_REVIEW_DATE = '2026-09-08';
+
 export const combinations = [
+  {
+    id: 'mmrv',
+    name: 'MMRV · measles, mumps, rubella & varicella',
+    ids: ['measles', 'mumps', 'rubella', 'varicella'],
+  },
+  {
+    id: 'pentavalent',
+    name: 'DTaP-IPV-Hib · five-in-one',
+    ids: ['diphtheria', 'tetanus', 'pertussis', 'polio', 'hib'],
+  },
+  {
+    id: 'hexavalent',
+    name: 'DTaP-IPV-Hib-HepB · six-in-one',
+    ids: ['diphtheria', 'tetanus', 'pertussis', 'polio', 'hib', 'hepatitis-b'],
+  },
   { id: 'mmr', name: 'MMR · measles, mumps & rubella', ids: ['measles', 'mumps', 'rubella'] },
   { id: 'dt', name: 'dT · diphtheria & tetanus', ids: ['diphtheria', 'tetanus'] },
-  { id: 'dtap', name: 'DTP / Tdap · diphtheria, tetanus & pertussis', ids: ['diphtheria', 'tetanus', 'pertussis'] },
-  { id: 'dtap-ipv', name: 'DTP-IPV · DTP & polio', ids: ['diphtheria', 'tetanus', 'pertussis', 'polio'] },
+  {
+    id: 'dtap',
+    name: 'DTP / Tdap · diphtheria, tetanus & pertussis',
+    ids: ['diphtheria', 'tetanus', 'pertussis'],
+  },
+  {
+    id: 'dtap-ipv',
+    name: 'DTP-IPV · DTP & polio',
+    ids: ['diphtheria', 'tetanus', 'pertussis', 'polio'],
+  },
   { id: 'hepa-b', name: 'Hepatitis A & B', ids: ['hepatitis-a', 'hepatitis-b'] },
 ];
-// WHO “Available vaccines”, reviewed 2026-09-07. Grouped diseases are split
+// WHO “Available vaccines”, reviewed 2026-09-08. Grouped diseases are split
 // for useful record keeping. Shingles is an additional entry from the reference app.
 const rows = [
   ['chikungunya', 'Chikungunya', 'Travel & exposure'],
@@ -59,5 +86,12 @@ const rows = [
   ['varicella', 'Varicella', 'Routine', 'Chickenpox'],
   ['yellow-fever', 'Yellow fever', 'Travel & exposure'],
 ];
-export const diseases = rows.map(([id, name, category, aliases = '']) => ({ id, name, category, aliases }));
-export const ids = new Set(diseases.map(d => d.id));
+export const diseases = rows.map(([id, name, category, aliases = '']) => ({
+  id,
+  name,
+  category,
+  aliases,
+}));
+export const ids = new Set(diseases.map((d) => d.id));
+
+export const diseaseFor = (id) => diseases.find((disease) => disease.id === id);

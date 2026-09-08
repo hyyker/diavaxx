@@ -1,0 +1,37 @@
+{
+  "state": {
+    "version": 1,
+    "records": {
+      "measles": {
+        "plan": "track",
+        "target": 2,
+        "nextDate": "",
+        "doses": [
+          {
+            "id": "52c4769d-5044-4f71-9e50-a0942d26d09b",
+            "date": "2020-01-02",
+            "type": "MMR · Ä"
+          },
+          {
+            "id": "876c1c46-d356-42c7-84eb-25aa1aa076f5",
+            "date": "2021-02-03",
+            "type": ""
+          }
+        ]
+      },
+      "rabies": {
+        "plan": "skip",
+        "target": null,
+        "nextDate": "",
+        "doses": []
+      },
+      "tetanus": {
+        "plan": "track",
+        "target": 3,
+        "nextDate": "2030-01-01",
+        "doses": []
+      }
+    }
+  },
+  "code": "EV1.eNp9kLFOwzAQhl-lujknnR3baTKzdmFFDBfbRVFDEiUuAkXeeCd2eDFsigQZ2u10v_7v9N0KL35eunGARhQwezvOboFmhWfPS-9_xqnnFEOY2Z6ggMDzkw_QyAIG_xruOPiUpsCNSy48rNC5tNHSqsrUDjUphepYCay9JmSqlXTSOKrb3Lr0JUlCEkgyn3ib8u5wuN99fuy-3iEWv9B9ZaywyqArtUElbYV75VuUmlkwU2WOegPNRKTyDwrxMSZTbruN3XLqpn9yw7nvr_nlfvCBh_Ot95SbuqTyoic2oBi_AVU5cXw"
+}

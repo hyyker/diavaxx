@@ -1,82 +1,78 @@
 # diavaxx
 
-A responsive, English-language vaccination tracker for GitHub Pages. All records stay in the browser. No backend, accounts, analytics, remote fonts, or runtime CDN dependencies.
+An English-language vaccination and illness tracker for GitHub Pages. Records stay in the browser: no backend, accounts, analytics, remote fonts, or runtime CDN dependencies.
 
 ## Run locally
 
-Use Node.js 22.12+ (or a newer supported LTS) and npm:
+Use Node.js 22.12+ and npm:
 
 ```sh
 npm ci
 npm run dev
 ```
 
-Open the local URL printed by Vite. Local development and the published website have separate browser storage.
+The development site and published website have separate browser storage.
 
 ```sh
-npm test                 # Record validation, status logic, transfer and QR round-trips
+npm test                 # Rules, validation, migrations, compression and QR round trips
 npm run build            # Static output in dist/
 npm run preview          # Preview the production build
 npx playwright install chromium webkit
-npm run test:e2e          # Desktop Chromium and iPhone 12 viewport in WebKit
+npm run test:e2e          # Desktop Chromium and iPhone 12-sized WebKit
+npm run format:check      # Check readable, consistent source formatting
 ```
 
-## Publish to GitHub Pages
+## Using diavaxx
 
-1. Create an empty repository on your GitHub account.
-2. In this project, connect it and push:
+- Open a disease to add, edit or delete vaccinations and illnesses. Vaccine type is optional. Illnesses have a start date, optional duration in days, and confirmation/recovery fields.
+- **Log vaccination** includes an **Illness** tab and combination vaccines. A combination creates an independent entry for each disease; totals count disease entries, not injections.
+- Choose **Finland**, **Germany**, or **No country plan** in **Plan & age group**. Age groups cover infancy through 75+. The welcome suggestions can be dismissed, and the plan remains accessible in the navigation and above the overview.
+- Country checklists place excluded diseases in **Not in plan**. Personal Track, Review and Not in plan choices survive country changes. Adding a new entry to an excluded disease makes it personally tracked.
+- Every disease has a documented reference dose count, including without a country plan. **Edit plan** can override the target (1–20) or add a review/booster date. Clear the target to return to the reference; choose **Follow country / reference plan** to remove a personal inclusion override.
+- The header button toggles dark mode. **Appearance** in the plan dialog can restore the device setting. Appearance, age group and welcome dismissal are saved and transferred.
 
-   ```sh
-   git remote add origin https://github.com/YOUR-USERNAME/YOUR-REPOSITORY.git
-   git push -u origin main
-   ```
+**Complete** means the reference/personal dose count or a supported illness-history criterion is met. Only distinct dose dates count. Overdue reminders and illnesses without recorded recovery require review. **Not in plan** means outside this checklist, not medically unnecessary.
 
-3. In the GitHub repository, open **Settings → Pages → Build and deployment → Source** and select **GitHub Actions**.
-4. Open **Actions → Deploy to GitHub Pages → Run workflow** if the initial push happened before Pages was configured.
-5. The workflow tests and builds the app, then publishes `dist/`. The deployment provides the website URL.
+These are broad life-stage checklists, **not an exact clinical scheduling engine**. Counts do not validate minimum intervals, age eligibility, product compatibility, contraindications or immunity. Primary courses may still need boosters. The app does not infer travel, pregnancy, occupation or medical risk. Review targets and reminder dates with a healthcare professional. Age groups and reminders must be updated manually; there are no notifications.
 
-The relative Vite base supports both `username.github.io` and `username.github.io/repository/`, as well as a custom domain. The app uses no server routes. Do not choose “Deploy from a branch” for the source files; the workflow publishes the built files.
+Confirmed, recovered **measles, mumps, rubella and varicella** histories can satisfy the documented history criterion. Other illnesses are recorded but do not automatically replace vaccine doses. Infant RSV antibodies are prophylaxis, not vaccinations.
 
-## Using the tracker
+## Sources
 
-- Open a disease to add, edit or delete dated doses. Vaccine type/brand is optional.
-- The global **Log vaccination** button also offers combination vaccines. Each covered disease gets its own entry; later edits affect only the selected disease. Totals count disease entries, not injections.
-- **Edit plan** sets a dose target (1–20), next review/dose date, and whether to track, review or set aside a disease.
-- **Complete** means the recorded count meets the chosen series target with no due reminder. **Needs attention** includes unfinished series, due reminders and undecided plans. **Not in plan** is the user's choice, not a medical or legal determination.
-- New records start undecided. An optional Finnish adult starter checklist sets seven basic-series targets; it preserves existing explicit plans and doses. Other diseases stay available for review.
-- Dates are interpreted as local calendar dates. Future vaccinations and invalid dates are rejected. A next review date may be past or future. Reminders must be updated or cleared manually and are shown only while the website is open.
+Reviewed **8 September 2026**. [Source notes and age-stage details](docs/sources.md) explain the assumptions behind the counts.
 
-## Disease and schedule sources
-
-Reviewed **7 September 2026**:
-
-- [WHO: Available vaccines](https://www.who.int/teams/immunization-vaccines-and-biologicals/diseases) supplies the complete disease-category scope. Hepatitis is split into A, B and E; meningococcal vaccines into ACWY, B and C. Smallpox/mpox remain grouped. Shingles is an additional category from the user’s reference app. There are 34 entries.
-- [Rokotesuoja: Finnish national programme](https://www.rokotesuoja.fi/miksi-rokottautua/kansallinen-rokotusohjelma) takes precedence for the Finnish adult selection, MMR targets and booster context.
-- [WHO summary tables](https://www.who.int/teams/immunization-vaccines-and-biologicals/policies/who-recommendations-for-routine-immunization---summary-tables), particularly [Table 3](https://www.who.int/publications/m/item/table-3-recommendations-for-interrupted-or-delayed-routine-immunization-summary-of-who-position-papers), support the DTP basic series and the three-dose IPV option.
-
-The app is a record and personal-plan tracker, not a clinical schedule engine. It does not infer age, exposure, pregnancy, contraindications, dose spacing, vaccine interchangeability, previous infection or immunity. There is deliberately no single universal dose count for every vaccine: many depend on product, age and previous doses. Primary-series completion is not lifelong protection. Confirm dose targets and booster dates with a healthcare professional. In particular, the adult starter is not a childhood schedule.
-
-No pipeline-only diseases or non-vaccine prophylaxis entries (e.g. rhesus prophylaxis) are included. The dataset is static: review `src/catalog.js` when source recommendations change.
+- [WHO disease catalogue](https://www.who.int/teams/immunization-vaccines-and-biologicals/diseases) defines the available-vaccine scope: 34 record categories, splitting hepatitis and meningococcal vaccines and including shingles.
+- [WHO summary tables](https://www.who.int/teams/immunization-vaccines-and-biologicals/policies/who-recommendations-for-routine-immunization---summary-tables) supply common primary-course references. There is no universal count applicable to every product and person.
+- [THL Finnish programme](https://thl.fi/nakemyksemme/korkeasta-rokotuskattavuudesta-on-pidettava-huolta/kansallinen-rokotusohjelma-mita-rokotteita-eri-ikaisille-suositellaan-) replaces the previous Finnish source.
+- [German Federal Ministry of Health](https://www.bundesgesundheitsministerium.de/themen/praevention/impfungen/schutzimpfungen) supplies German programme context.
+- [RKI July 2026 COVID update](https://edoc.rki.de/handle/176904/13784.2) supersedes the older German overview's general three-contact rule. Routine seasonal vaccination is included from 75; risk-based recommendations below that age require individual review.
 
 ## Backup and transfer
 
-**Export & back up** provides a transfer string, downloadable text backup and downloadable QR image(s). **Import a record** accepts the string/link, text backup, JSON state, camera scan, or QR screenshot/photo. Import validates and previews the data before replacing the receiving record. Export both devices before choosing which should replace the other; there is no automatic merge.
+Export provides a compressed code, text backup and QR image(s). Import accepts a code/link, text backup, JSON state, camera scan, or QR image. It validates and previews an **exact replacement** before saving. There is no automatic merge; export both devices before replacing differing records.
 
-The `EV1.` format is a validated version-1 JSON state, compressed with zlib and encoded as URL-safe Base64. It includes every dose ID, date, type, target, plan status and reminder. It is **not encrypted**. Treat backups and QR codes as private health records. Decoding is local, and malformed or oversized input is rejected. A record supports up to 2,000 disease-dose entries, a 120-character vaccine type, and 600 KB of serialized UTF-8 data. Export and import share compatible size limits.
+V2 uses compact fields, vaccine-name dictionaries, packed dates/IDs, zlib compression and an integrity checksum. **Original V1 codes and local records still import**, preserving vaccination IDs, dates, types, personal targets and reminders. V1 did not store the selected country; migration therefore leaves the country unselected. V1 undecided records use the new automatic reference targets. The first successful edit saves the migrated schema.
 
-One QR uses a link to this website with data in the URL fragment (`#transfer=…`), which is not sent in HTTP requests. The app removes the fragment from the address bar before previewing. For longer records, `EVQ1.` splits the code into numbered 900-character chunks with a shared transfer identifier. Scan or upload all parts using the app's import screen, in any order. The full text backup remains available regardless of QR count.
+The format supports optional extension fields for future features. Unknown incompatible versions or fields are rejected visibly rather than silently discarded. The old app cannot read new codes. See the [transfer format](docs/transfer-format.md) for wire details and migration guarantees.
 
-Clearing browser/site data, moving to another URL, using a different browser or private browsing may make records unavailable. Local storage is not encrypted, and other people using the same browser profile can see it. Export regularly. Storage failures are surfaced; unreadable existing records are preserved for recovery rather than silently overwritten. Updates from another tab refresh the UI and close stale edit dialogs.
+Records support up to 2,000 total vaccination/illness entries, 120 characters per vaccine type, and 610 KB serialized UTF-8 (including migration headroom above V1’s 600 KB limit). Large backups split into numbered QR parts; scan all parts in any order. A single QR is a link with data in the URL fragment, which is not sent in HTTP requests. The app removes that fragment before previewing.
 
-## Structure
+**Backups and local storage are not encrypted.** Anyone with the code or access to this browser profile can read the record. Clearing site data, using private browsing, or moving to a different address/browser may make records unavailable. Export regularly. Unreadable stored data is preserved for recovery; failed saves are reported. Cross-tab updates close stale forms.
 
-- `src/app.js`: views, forms, local persistence, QR camera/image UI.
-- `src/model.js`: schema validation and deterministic status logic.
-- `src/catalog.js`: disease catalogue, combinations, source links and starter targets.
-- `src/transfer.js`: bounded decoding, compression and multipart transfer.
-- `src/style.css`: responsive styles; system fonts.
-- `src/icons.js`: small inline SVG icon set.
-- `tests/`: core tests and end-to-end browser flows.
-- `.github/workflows/deploy.yml`: GitHub Pages deployment.
+## Publish to GitHub Pages
 
-Runtime dependencies are limited to `fflate` (compression), `qrcode` (generation), and `jsqr` (cross-browser camera/image decoding). Vite builds the static bundle; Playwright is used only for testing. Camera access requires HTTPS or localhost. iPhone-sized WebKit is tested, but emulation is not a substitute for physical-device testing.
+For an existing installation, push the changes to `main`; the existing workflow builds and deploys them. No backend or GitHub configuration changes are required for V2.
+
+For a new installation:
+
+1. Create a GitHub repository and push this project to its `main` branch.
+2. Set **Settings → Pages → Build and deployment → Source → GitHub Actions**.
+3. Run **Actions → Deploy to GitHub Pages** if the first push happened before Pages was enabled.
+
+The workflow tests the rules, builds the app and publishes `dist/`. The relative Vite base supports `username.github.io/repository/` and custom domains. Do not deploy the unbuilt source with “Deploy from a branch.”
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the source map and testing conventions. The app uses plain JavaScript and small modules. Runtime dependencies are `fflate`, `qrcode` and `jsqr`; QR generation and scanning load when needed. Vite is the build tool, Prettier formats source, and Playwright exercises browser flows.
+
+Camera access requires HTTPS or localhost. Automated iPhone-sized WebKit testing complements, but does not replace, checks on a physical phone.
